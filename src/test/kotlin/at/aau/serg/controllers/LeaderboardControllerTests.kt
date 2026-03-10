@@ -5,8 +5,10 @@ import at.aau.serg.services.GameResultService
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+import org.springframework.web.server.ResponseStatusException
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import org.mockito.Mockito.`when` as whenever // when is a reserved keyword in Kotlin
 
 class LeaderboardControllerTests {
@@ -28,7 +30,7 @@ class LeaderboardControllerTests {
 
         whenever(mockedService.getGameResults()).thenReturn(listOf(second, first, third))
 
-        val res: List<GameResult> = controller.getLeaderboard()
+        val res: List<GameResult> = controller.getLeaderboard(null)
 
         verify(mockedService).getGameResults()
         assertEquals(3, res.size)
@@ -64,7 +66,7 @@ class LeaderboardControllerTests {
 
         whenever(mockedService.getGameResults()).thenReturn(listOf(second, third, first))
 
-        val res: List<GameResult> = controller.getLeaderboard()
+        val res: List<GameResult> = controller.getLeaderboard(null)
 
         verify(mockedService).getGameResults()
         assertEquals(3, res.size)
@@ -75,4 +77,62 @@ class LeaderboardControllerTests {
         assertEquals(third, res[2])
     }
 
+    // Aufgabe 2.2.2: neuer Test für rank
+    @Test
+    fun test_getLeaderboard_withRank_returnsSurroundingPlayers() {
+        val list = listOf(
+            GameResult(1,"A",50,10.0),
+            GameResult(2,"B",45,11.0),
+            GameResult(3,"C",40,12.0),
+            GameResult(4,"D",35,13.0),
+            GameResult(5,"E",30,14.0),
+            GameResult(6,"F",25,15.0),
+            GameResult(7,"G",20,16.0),
+            GameResult(8,"H",15,17.0)
+        )
+
+        whenever(mockedService.getGameResults()).thenReturn(list)
+
+        val res = controller.getLeaderboard(5)
+
+        assertEquals(7, res.size)
+        assertEquals("B", res[0].playerName)
+        assertEquals("H", res[6].playerName)
+    }
+
+    // 2.2.2: Test für ungültigen rank:
+    @Test
+    fun test_getLeaderboard_invalidRank_throws400() {
+
+        whenever(mockedService.getGameResults()).thenReturn(emptyList())
+
+        assertFailsWith<ResponseStatusException> {
+            controller.getLeaderboard(-1)
+        }
+    }
+
+    // Test für rank <1:
+    @Test
+    fun test_getLeaderboard_rankTooSmall_returns400() {
+
+        whenever(mockedService.getGameResults()).thenReturn(
+            listOf(GameResult(1,"A",10,10.0))
+        )
+
+        assertFailsWith<ResponseStatusException> {
+            controller.getLeaderboard(0)
+        }
+    }
+    // test für rank > size
+    @Test
+    fun test_getLeaderboard_rankTooLarge_returns400() {
+
+        whenever(mockedService.getGameResults()).thenReturn(
+            listOf(GameResult(1,"A",10,10.0))
+        )
+
+        assertFailsWith<ResponseStatusException> {
+            controller.getLeaderboard(5)
+        }
+    }
 }
