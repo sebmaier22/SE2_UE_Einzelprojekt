@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController
 class LeaderboardController(
     private val gameResultService: GameResultService
 ) {
-
+    // Aufgabe 2.2.1: Hier nur "it.timeInSeconds" eingefügt für die zeitl. Sortierung (- davor = absteigend, ohne - ist aufsteigend)
     @GetMapping
     fun getLeaderboard(): List<GameResult> =
-        gameResultService.getGameResults().sortedWith(compareBy({ -it.score }, { it.id }))
+        gameResultService.getGameResults().sortedWith(compareBy({ -it.score }, { it.timeInSeconds }))
 
 }

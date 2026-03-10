@@ -36,7 +36,7 @@ class LeaderboardControllerTests {
         assertEquals(second, res[1])
         assertEquals(third, res[2])
     }
-
+    /*
     @Test
     fun test_getLeaderboard_sameScore_CorrectIdSorting() {
         val first = GameResult(1, "first", 20, 20.0)
@@ -49,6 +49,27 @@ class LeaderboardControllerTests {
 
         verify(mockedService).getGameResults()
         assertEquals(3, res.size)
+        assertEquals(first, res[0])
+        assertEquals(second, res[1])
+        assertEquals(third, res[2])
+    } */
+
+
+    @Test //Aufgabe 2.2.1 Test: Hier der neue Test für die zeitliche Sortierung
+    fun test_getLeaderboard_sameScore_correctTimeSorting() {
+        // id absichtlich nicht aufsteigend eingetragen um wirklich die Sortierung per zeit zu testen
+        val first = GameResult(3, "first", 20, 10.0)
+        val second = GameResult(1, "second", 20, 15.0)
+        val third = GameResult(2, "third", 20, 20.0)
+
+        whenever(mockedService.getGameResults()).thenReturn(listOf(second, third, first))
+
+        val res: List<GameResult> = controller.getLeaderboard()
+
+        verify(mockedService).getGameResults()
+        assertEquals(3, res.size)
+
+        // shortest time first
         assertEquals(first, res[0])
         assertEquals(second, res[1])
         assertEquals(third, res[2])
