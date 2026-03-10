@@ -72,4 +72,17 @@ class GameResultServiceTests {
         assertEquals(2, res[1].id)
     }
 
+    // Aufgabe 2.2.3 Test für 100% Coverage in GameResultService
+    @Test
+    fun test_deleteGameResult_existingId_removesElement() {
+        val gameResult = GameResult(0, "player1", 10, 5.0)
+
+        service.addGameResult(gameResult)
+        service.deleteGameResult(1)
+
+        val res = service.getGameResults()
+
+        assertEquals(0, res.size)
+    }
+
 }

@@ -30,7 +30,7 @@ class LeaderboardControllerTests {
 
         whenever(mockedService.getGameResults()).thenReturn(listOf(second, first, third))
 
-        val res: List<GameResult> = controller.getLeaderboard(null)
+        val res: List<GameResult> = controller.getLeaderboard(null) // null steht dafür, dass rank nicht gesetzt ist.
 
         verify(mockedService).getGameResults()
         assertEquals(3, res.size)
@@ -66,7 +66,7 @@ class LeaderboardControllerTests {
 
         whenever(mockedService.getGameResults()).thenReturn(listOf(second, third, first))
 
-        val res: List<GameResult> = controller.getLeaderboard(null)
+        val res: List<GameResult> = controller.getLeaderboard(null) // null steht dafür, dass rank nicht gesetzt ist.
 
         verify(mockedService).getGameResults()
         assertEquals(3, res.size)
